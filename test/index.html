@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>jm compare with joi</title>
+  </head>
+  <body>
+    <pre></pre>
+    <pre id="pre2"></pre>
+    <script src="../dist/jm.umd.js"></script>
+    <script src="https://unpkg.com/joi@17.3.0/dist/joi-browser.min.js"></script>
+    <script>
+      const {
+        defaultMessage,
+        num,
+        validate,
+        validateAsync,
+        str,
+        sameAs,
+        bool,
+        array,
+      } = jm
+      const userSchema = {
+        h: {},
+        username: str({ min: 6 }),
+        pass: str({ alphanum: true }),
+        email: str({ alphanum: true, label: 'Hello' }),
+        r_pass: sameAs('pass'),
+        r2_pass: sameAs('r_pass'),
+        complete: bool(),
+        money: {
+          bitcoin: num(),
+          usd: num(),
+        },
+        tags: array({ items: num(), allow: ['hello'], min: 5, max: 10 }),
+      }
+      const JoiUserSchema = joi
+        .object({
+          h: joi.object({}).required(),
+          username: joi.string().min(6).required(),
+          pass: joi.string().alphanum().required(),
+          email: joi.string().alphanum().label('Hello').required(),
+          r_pass: joi.ref('pass'),
+          r2_pass: joi.ref('r_pass'),
+          complete: joi.boolean().required(),
+          money: joi
+            .object({
+              bitcoin: joi.number().required(),
+              usd: joi.number().required(),
+            })
+            .required(),
+          tags: joi
+            .array()
+            .length(5)
+            .max(10)
+            .items(joi.number())
+            .allow('hello'),
+        })
+        .required()
+      const data = {
+        h: 'sad',
+        username: '727228sdasdj',
+        pass: 'asdasn d',
+        email: 'sjsz@hsd.com',
+        r2_pass: 'darkcris',
+        complete: true,
+        tags: 'hello',
+        money: {
+          bitcoin: 'jsjsjss',
+        },
+      }
+
+      let error = {}
+      const time = Date.now()
+      error = validateAsync(data, userSchema, { abortEarly: false })
+      console.log((Date.now() - time) / 1000 + '- jm (json-message)')
+
+      let error1 = {}
+      const time1 = Date.now()
+      error1 = JoiUserSchema.validateAsync(data, { abortEarly: false })
+      console.log((Date.now() - time1) / 1000 + '- Joi')
+
+      document.querySelector('pre').innerHTML = JSON.stringify(error, null, 2)
+      document.querySelector('#pre2').innerHTML = JSON.stringify(
+        error1?.error?.details,
+        null,
+        2,
+      )
+    </script>
+  </body>
+</html>

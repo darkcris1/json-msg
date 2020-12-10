@@ -6,9 +6,12 @@
     <title>jm compare with joi</title>
   </head>
   <body>
+    <h1>Testing 7000 properties</h1>
+    <h2 id="json-msg"></h2>
     <pre></pre>
+    <h2 id="joi"></h2>
     <pre id="pre2"></pre>
-    <script src="../dist/jm.umd.js"></script>
+    <script src="../dist/jm.umd.min.js"></script>
     <script src="https://unpkg.com/joi@17.3.0/dist/joi-browser.min.js"></script>
     <script>
       const {
@@ -35,6 +38,7 @@
         },
         tags: array({ items: num(), allow: ['hello'], min: 5, max: 10 }),
       }
+
       const JoiUserSchema = joi
         .object({
           h: joi.object({}).required(),
@@ -59,8 +63,6 @@
         })
         .required()
       const data = {
-        h: 'sad',
-        username: '727228sdasdj',
         pass: 'asdasn d',
         email: 'sjsz@hsd.com',
         r2_pass: 'darkcris',
@@ -73,13 +75,17 @@
 
       let error = {}
       const time = Date.now()
-      error = validateAsync(data, userSchema, { abortEarly: false })
-      console.log((Date.now() - time) / 1000 + '- jm (json-message)')
+      for (let i = 0; i < 1000; i++) {
+        error = validate(data, userSchema, { abortEarly: false })
+      }
+      const jmTime = (Date.now() - time) / 1000 + 'ms- jm (json-msg)'
 
       let error1 = {}
       const time1 = Date.now()
-      error1 = JoiUserSchema.validateAsync(data, { abortEarly: false })
-      console.log((Date.now() - time1) / 1000 + '- Joi')
+      for (let i = 0; i < 1000; i++) {
+        error1 = JoiUserSchema.validate(data, { abortEarly: false })
+      }
+      const joiTime = (Date.now() - time1) / 1000 + 'ms - Joi'
 
       document.querySelector('pre').innerHTML = JSON.stringify(error, null, 2)
       document.querySelector('#pre2').innerHTML = JSON.stringify(
@@ -87,6 +93,9 @@
         null,
         2,
       )
+
+      document.getElementById('joi').innerText = joiTime
+      document.getElementById('json-msg').innerText = jmTime
     </script>
   </body>
 </html>

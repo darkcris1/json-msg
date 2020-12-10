@@ -8,14 +8,13 @@ function removeUnuseOption(config, message) {
   typeObj[TYPE_KEY] = true
   if (label) typeObj.label = label
   if (allow) typeObj.allow = allow
-  if (!required) delete config.required
 
   for (let key in config)
     if (/message|label|allow/.test(key)) delete config[key]
 
   for (let key in config) typeObj.message[key] = message[key]
 
-  typeObj.config = { ...config }
+  typeObj.config = { required, ...config }
   return typeObj
 }
 
@@ -74,8 +73,8 @@ export function array(config = {}) {
   if (items) config.items = isItemsMatch
 
   return Type({
-    type,
     ...config,
+    type,
     message: {
       ...initialMsg[type],
       ...config.message,

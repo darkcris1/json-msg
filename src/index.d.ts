@@ -53,7 +53,7 @@ interface MainSchema {
   /**
    * Add A custom validation
    */
-  [key: string]: RegExp | ((value: any) => boolean)
+  [key: string]: any
 }
 
 interface StringSchema extends MainSchema {
@@ -152,13 +152,14 @@ declare namespace jm {
     option: ValidationOption,
   ): Promise<null | object>
 
+  /**
+   * Return an object if error occured and return null if there is no errors
+   */
   function validate(
     data: any,
     schema: TypeObject | object,
     option: ValidationOption,
   ): null | object
 }
-
-const jm: jm
 
 export default jm

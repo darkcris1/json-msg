@@ -8,5 +8,6 @@ const jm = {
   validate,
   validateAsync,
 }
+Object.freeze(jm)
 
 export default jm

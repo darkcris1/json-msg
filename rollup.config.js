@@ -36,23 +36,15 @@ export default (commandLineArgs) => {
       ],
     },
 
-    // CommonJS (for Node) and ES module (for bundlers) build
+    // CommonJS (for Node) build
     {
       input: 'src/index.js',
-      external: [], // indicate which modules should be treated as external
-      output: [
-        {
-          banner,
-          file: pkg.main,
-          format: 'cjs',
-          exports: 'auto',
-        },
-        {
-          banner,
-          file: pkg.module,
-          format: 'es',
-        },
-      ],
+      output: {
+        banner,
+        file: pkg.main,
+        format: 'cjs',
+        exports: 'auto',
+      },
       plugins: [
         babel({
           exclude: ['node_modules/**'],

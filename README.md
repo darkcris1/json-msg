@@ -14,7 +14,7 @@
 - Customizable Messages
 - Custom Validation
 - Easy Configuration
-- Lightweight
+- Lightweight 4.6kb
 - Fast
 
 ## Docs

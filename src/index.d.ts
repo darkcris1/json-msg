@@ -150,7 +150,13 @@ declare namespace jm {
     data: any,
     schema: TypeObject | object,
     option: ValidationOption,
-  ): Promise
+  ): Promise<null | object>
+
+  function validate(
+    data: any,
+    schema: TypeObject | object,
+    option: ValidationOption,
+  ): null | object
 }
 
 const jm: jm

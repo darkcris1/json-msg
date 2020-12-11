@@ -62,12 +62,32 @@ interface StringSchema extends MainSchema {
 }
 
 interface NumberSchema extends MainSchema {
+  /**
+   * Check if the number how many digits in the number
+   * @default undefined
+   */
   digit?: number
+  /**
+   * Check if the number is integer
+   * @default false
+   */
   float?: boolean
+  /**
+   * Check if the number is integer
+   * @default false
+   */
   integer?: boolean
 }
 
 interface ArraySchema extends MainSchema {
+  /**
+   * You can add either array or type object directly
+   * array({items: num()}) // this will check if the items of the array is a number
+   *
+   * or
+   *
+   * array({items: [num(), str()] , min: 2})
+   */
   items?: Config | Config[]
 }
 
@@ -86,12 +106,7 @@ interface anySchema {
   required?: boolean
   message?: MessageObject
 }
-type TypeObject =
-  | StringSchema
-  | NumberSchema
-  | StringSchema
-  | SameAsSChema
-  | BooleanSchema
+type TypeObject = StringSchema | NumberSchema | StringSchema | BooleanSchema
 
 interface ValidationOption {
   /**
@@ -125,7 +140,15 @@ declare namespace jm {
   function bool(config: BooleanSchema): Config
 
   function any(config: anySchema): Config
-
+  /**
+   * path for the same input
+   * eg.
+   * {
+   *  pass: str(),
+   *  confirm_pass: sameAs("pass")
+   * }
+   * NOTE: This is only work for relative path
+   */
   function sameAs(path: string, config: SameAsSChema): Config
   /**
    * %label% is the label of the data -
@@ -162,4 +185,4 @@ declare namespace jm {
   ): null | object
 }
 
-export default jm
+export = jm

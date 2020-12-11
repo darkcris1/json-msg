@@ -1,6 +1,6 @@
 {
   "name": "json-msg",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Fast, quite and beautiful messages for validating schema",
   "main": "dist/jm.cjs.js",
   "browser": "dist/jm.umd.min.js",

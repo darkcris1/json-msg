@@ -1,3 +1,4 @@
+/* eslint-disable no-case-declarations */
 import {
   isArray,
   isBoolean,
@@ -66,13 +67,14 @@ function _checkOptionKey(config) {
       case 'min': // check the value if it is
       case 'max':
         if (isUndefined(value)) continue
-        // eslint-disable-next-line no-case-declarations
         const errorMsg = _checkMinMax(key, value, typeObj, msg)
         if (errorMsg) errors.push(errorMsg)
         break
       case 'required': // check the value if it s undefined
-        if (!keyValue) continue
-        if (isUndefined(value) || value === '') errors.push(msg)
+        const isValueEmpty =
+          isUndefined(value) || (typeObj.type === 'string' && value === '')
+        if (!keyValue && isValueEmpty) return null
+        if (keyValue && isValueEmpty) errors.push(msg)
         break
       case 'digit': // chech the value if its certain to its minimum digits
         if (!RegExp('d{' + keyValue + '}').test(value)) errors.push(msg)

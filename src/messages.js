@@ -12,6 +12,7 @@ export const initialMsg = {
     min: '%label% characters length must be greater than %keyValue%',
     max: '%label% characters length must be less than %keyValue%',
     email: '%label% must be a valid email',
+    required: '%label% is required or not allowed to be empty',
     alphanum: '%label% must contain letters and numbers only',
   },
   array: {

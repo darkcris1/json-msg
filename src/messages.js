@@ -34,7 +34,7 @@ export function defaultMessage(msg = {}) {
   }
 }
 export function defaultMsg(
-  msg = '%label is invalid',
+  msg = '%label% is invalid',
   { label = 'This', value = '', keyValue = '' },
 ) {
   return msg

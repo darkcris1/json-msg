@@ -10,7 +10,7 @@ function removeUnuseOption(config, message) {
   if (allow) typeObj.allow = allow
 
   for (let key in config)
-    if (/message|label|allow/.test(key)) delete config[key]
+    if (/\b(message|label|allow)\b/.test(key)) delete config[key]
 
   for (let key in config) typeObj.message[key] = message[key]
 
@@ -38,8 +38,8 @@ export function num(config = {}) {
   if (config.integer) config.integer = isInt
   if (config.float) config.float = isFloat
   return Type({
-    ...config,
     type,
+    ...config,
     message: { ...initialMsg[type], ...config.message },
   })
 }
@@ -50,8 +50,8 @@ export function str(config = {}) {
   if (config.alphanum) config.alphanum = /^[A-Za-z0-9]+$/
   if (config.email) config.email = isEmail
   return Type({
-    ...config,
     type,
+    ...config,
     message: { ...initialMsg[type], ...config.message },
   })
 }
@@ -73,8 +73,8 @@ export function array(config = {}) {
   if (items) config.items = isItemsMatch
 
   return Type({
-    ...config,
     type,
+    ...config,
     message: {
       ...initialMsg[type],
       ...config.message,
@@ -86,8 +86,8 @@ export function array(config = {}) {
 export function bool(config = {}) {
   const type = 'boolean'
   return Type({
-    ...config,
     type,
+    ...config,
     message: {
       ...initialMsg[type],
       ...config.message,

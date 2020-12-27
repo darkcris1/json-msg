@@ -192,14 +192,6 @@ jm.validate("stts",hasNumberString, {showAllErrors: true}))
 ## 2nd way
 
 ```javascript
-// this will globally set an error messages validation
-
-const schema {
-  user: str({label: "Username"}),
-  pin: num({min: 5000})// if you not set a label "pin" is the default
-}
-
-
 // %label% is the label of your data
 // %keyValue% is the value of the keys eg. 5000 is the keyValue of the min
 // %value% is the data value that has pass in

@@ -27,8 +27,8 @@
       const userSchema = {
         h: {},
         username: str({ min: 6 }),
-        pass: num({ required: false }),
-        email: str({ alphanum: true, label: 'Hello' }),
+        pass: str({ required: false, min:7, max: 90 }),
+        email: str({ alphanum: true, label: 'CustomLabel' }),
         r_pass: sameAs('pass'),
         r2_pass: sameAs('r_pass'),
         complete: bool(),
@@ -39,31 +39,8 @@
         tags: array({ items: num(), allow: ['hello'], min: 5, max: 10 }),
       }
 
-      const JoiUserSchema = joi
-        .object({
-          h: joi.object({}),
-          username: joi.string().min(6).required(),
-          pass: joi.number().required(),
-          email: joi.string().alphanum().label('Hello').required(),
-          r_pass: joi.ref('pass'),
-          r2_pass: joi.ref('r_pass'),
-          complete: joi.boolean().required(),
-          money: joi
-            .object({
-              bitcoin: joi.number().required(),
-              usd: joi.number().required(),
-            })
-            .required(),
-          tags: joi
-            .array()
-            .length(5)
-            .max(10)
-            .items(joi.number())
-            .allow('hello'),
-        })
-        .required()
       const data = {
-        pass: '',
+        pass: [],
         email: 'sjsz@hsd.com',
         r2_pass: 'darkcris',
         complete: true,
@@ -80,21 +57,9 @@
       }
       const jmTime = (Date.now() - time) / 1000 + 'ms- jm (json-msg)'
 
-      let error1 = {}
-      const time1 = Date.now()
-      for (let i = 0; i < 1000; i++) {
-        error1 = JoiUserSchema.validate(data, { abortEarly: false })
-      }
-      const joiTime = (Date.now() - time1) / 1000 + 'ms - Joi'
 
       document.querySelector('pre').innerHTML = JSON.stringify(error, null, 2)
-      document.querySelector('#pre2').innerHTML = JSON.stringify(
-        error1?.error?.details,
-        null,
-        2,
-      )
-
-      document.getElementById('joi').innerText = joiTime
+     
       document.getElementById('json-msg').innerText = jmTime
     </script>
   </body>

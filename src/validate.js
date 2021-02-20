@@ -24,17 +24,17 @@ const getPath = (path, obj) =>
  * @param {string} msg
  */
 function _checkMinMax(key, value, typeObj, msg) {
-  const isMin = key === 'min'
+  const isMinimum = key === 'min'
   const minMax = typeObj[key]
   switch (typeObj.type) {
     case 'string':
     case 'array':
-      if (isMin && value.length < minMax) return msg
-      else if (!isMin && value.length > minMax) return msg
+      if (isMinimum && value.length < minMax) return msg
+      else if (!isMinimum && value.length > minMax) return msg
       break
     case 'number':
-      if (isMin && value < minMax) return msg
-      else if (!isMin && value > minMax) return msg
+      if (isMinimum && value < minMax) return msg
+      else if (!isMinimum && value > minMax) return msg
   }
 }
 
@@ -64,20 +64,26 @@ function _checkOptionKey(config) {
       case 'sameAs': // check if its the same with the given paths
         if (!(getPath(keyValue, data) === value)) errors.push(msg)
         break
-      case 'min': // check the value if it is
+      case 'min':
       case 'max':
         if (isUndefined(value)) continue
+
         const errorMsg = _checkMinMax(key, value, typeObj, msg)
         if (errorMsg) errors.push(errorMsg)
+
         break
-      case 'required': // check the value if it s undefined
+      case 'required':
         const isValueEmpty =
           isUndefined(value) || (typeObj.type === 'string' && value === '')
+
+        // Return Imediately if the required is false
         if (!keyValue && isValueEmpty) return null
+
         if (keyValue && isValueEmpty) errors.push(msg)
+
         break
       case 'digit': // chech the value if its certain to its minimum digits
-        if (!RegExp('d{' + keyValue + '}').test(value)) errors.push(msg)
+        if (!RegExp('\\d{' + keyValue + '}').test(value)) errors.push(msg)
         break
       case 'type': // check the type of the value
         if (!_checkType(value, typeObj.type)) errors.push(msg)

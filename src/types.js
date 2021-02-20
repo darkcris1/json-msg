@@ -3,18 +3,20 @@ import { initialMsg } from './messages'
 import { validate } from './validate'
 
 function removeUnuseOption(config, message) {
-  const { label, allow, required } = config
-  const typeObj = { message: {} }
+  const { label, allow, required, type = 'any' } = config
+  const typeObj = { message }
   typeObj[TYPE_KEY] = true
+
   if (label) typeObj.label = label
   if (allow) typeObj.allow = allow
 
-  for (let key in config)
-    if (/\b(message|label|allow)\b/.test(key)) delete config[key]
+  delete config.label
+  delete config.allow
+  delete config.message
 
-  for (let key in config) typeObj.message[key] = message[key]
+  typeObj.config = { required, type, ...config }
+  delete config.type
 
-  typeObj.config = { required, ...config }
   return typeObj
 }
 
@@ -94,11 +96,12 @@ export function bool(config = {}) {
     },
   })
 }
+
 // reference for value
 export function sameAs(key, config = {}) {
   return Type({
     sameAs: key || '',
-    label: config.labael,
+    label: config.label,
     message: {
       sameAs: initialMsg.sameAs,
       ...config.message,

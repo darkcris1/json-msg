@@ -1,4 +1,4 @@
-export const TYPE_KEY = 'T.$$.KE.y' //Unique Type Obj Key
+export const TYPE_KEY = 'isJsonMsg' //Unique Type Obj Key
 
 export const isFunction = (func) => func instanceof Function
 export const isString = (str) => typeof str === 'string'

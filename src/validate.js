@@ -174,6 +174,7 @@ function checkDataErrors(data, schema, error = {}, config) {
     }
   }
   _checkNotPartOfSchema(data, schema, error, abortEarly)
+
   return isEmpthyObj(error) ? null : error
 }
 
@@ -190,6 +191,9 @@ function validateSingle({ typeObj, ...rest }) {
 
 function validate(data, schema, config = {}) {
   if (isObj(data)) return checkDataErrors(data, schema, {}, config)
+
+  if (schema.isJsonMsg && schema.config.sameAs)
+    throw new Error('sameAs should not be use as single validate')
 
   return validateSingle({
     value: data,

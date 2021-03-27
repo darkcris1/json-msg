@@ -17,11 +17,15 @@ interface MessageObject {
 interface Config {
   message: MessageObject
   allow?: any[]
-  'T.$$.KE.y': true
+  isJsonMsg: true
   config: object
 }
 
 interface MainSchema {
+  /**
+   * ReadOnly Property
+   */
+  readonly type?: String
   message?: MessageObject
   /**
    * check the min length or min value of a data
@@ -56,12 +60,12 @@ interface MainSchema {
   [key: string]: any
 }
 
-interface StringSchema extends MainSchema {
+export interface StringSchema extends MainSchema {
   email?: boolean
   alphanum?: boolean
 }
 
-interface NumberSchema extends MainSchema {
+export interface NumberSchema extends MainSchema {
   /**
    * Check if the number how many digits in the number
    * @default undefined
@@ -79,7 +83,7 @@ interface NumberSchema extends MainSchema {
   integer?: boolean
 }
 
-interface ArraySchema extends MainSchema {
+export interface ArraySchema extends MainSchema {
   /**
    * You can add either array or type object directly
    * array({items: num()}) // this will check if the items of the array is a number
@@ -91,22 +95,29 @@ interface ArraySchema extends MainSchema {
   items?: Config | Config[]
 }
 
-interface BooleanSchema {
+export interface BooleanSchema {
   required?: boolean
   message?: MessageObject
   label?: string
 }
 
-interface SameAsSChema {
+export interface SameAsSChema {
   message?: MessageObject
   label?: string
 }
-interface anySchema {
+export interface anySchema {
   label?: string
   required?: boolean
   message?: MessageObject
 }
-type TypeObject = StringSchema | NumberSchema | StringSchema | BooleanSchema
+export type JMTypeObject =
+  | StringSchema
+  | NumberSchema
+  | StringSchema
+  | BooleanSchema
+  | ArraySchema
+  | anySchema
+  | object
 
 interface ValidationOption {
   /**
@@ -122,7 +133,7 @@ interface ValidationOption {
   abortEarly?: boolean
 }
 
-interface DefaultMessageObject {
+export interface DefaultMessageObject {
   string?: MessageObject
   boolean?: MessageObject
   number?: MessageObject
@@ -131,15 +142,15 @@ interface DefaultMessageObject {
 }
 
 declare namespace jm {
-  function str(config: StringSchema): Config
+  function str(config?: StringSchema): Config
 
-  function num(config: NumberSchema): Config
+  function num(config?: NumberSchema): Config
 
-  function array(config: ArraySchema): Config
+  function array(config?: ArraySchema): Config
 
-  function bool(config: BooleanSchema): Config
+  function bool(config?: BooleanSchema): Config
 
-  function any(config: anySchema): Config
+  function any(config?: anySchema): Config
   /**
    * path for the same input
    * eg.
@@ -149,7 +160,7 @@ declare namespace jm {
    * }
    * NOTE: This is only work for relative path
    */
-  function sameAs(path: string, config: SameAsSChema): Config
+  function sameAs(path: string, config?: SameAsSChema): Config
   /**
    * %label% is the label of the data -
    * %keyValue% is the value of the key -
@@ -169,20 +180,20 @@ declare namespace jm {
   /**
    * This will return a Promise of error messages or null if there is no errors
    */
-  function validateAsync(
-    data: any,
-    schema: TypeObject | object,
-    option: ValidationOption,
-  ): Promise<null | object>
+  function validateAsync<data>(
+    data: data,
+    schema: JMTypeObject,
+    option?: ValidationOption,
+  ): Promise<null | data>
 
   /**
    * Return an object if error occured and return null if there is no errors
    */
-  function validate(
-    data: any,
-    schema: TypeObject | object,
-    option: ValidationOption,
-  ): null | object
+  function validate<data>(
+    data: data,
+    schema: JMTypeObject,
+    option?: ValidationOption,
+  ): null | data
 }
 
-export = jm
+export default jm

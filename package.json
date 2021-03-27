@@ -20,7 +20,8 @@
     "clean": "rimraf dist coverage",
     "test": "jest --maxWorkers=1",
     "test:dev": "jest --watchAll --maxWorkers=1",
-    "pub": "npm version patch && npm run build && npm publish"
+    "pub": "npm version patch && npm run build && npm publish",
+    "pub:minor": "npm version minor && npm run build && npm publish"
   },
   "keywords": [
     "validator",

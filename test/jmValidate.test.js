@@ -74,5 +74,6 @@ describe('Check the validation function', () => {
     expect(jm.validate(12.023, jm.num({ float: true }))).toBeNull()
     expect(jm.validate(['asd'], jm.array({ items: jm.str() }))).toBeNull()
     expect(jm.validate(true, jm.bool())).toBeNull()
+    expect(() => jm.validate('asdasd', jm.sameAs('password'))).toThrow()
   })
 })

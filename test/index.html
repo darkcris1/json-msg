@@ -4,61 +4,112 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>jm compare with joi</title>
+    <style>
+      :root {
+        --flex-direction: row;
+        --text-align-navigation: left;
+      }
+      :root.navigation-right {
+        --flex-direction: row-reverse;
+        --text-align-navigation: right;
+      }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+      }
+      *:not(pre, body) {
+        font-family: inherit;
+      }
+      [changeable-navigation] {
+        display: flex;
+        flex-direction: var(--flex-direction);
+        /* text-align: var(--text-align-navigation); */
+      }
+      .pre-container {
+        width: 100%;
+      }
+      pre {
+        font-size: 1rem;
+        padding: 1rem;
+        border-radius: 1rem;
+      }
+
+      .container-item {
+        width: 100%;
+        justify-content: space-between;
+      }
+      span {
+        color: red;
+        background: black;
+      }
+    </style>
   </head>
   <body>
     <h1>Testing 7000 properties</h1>
+    <button id="changeNavigation">Left</button>
     <h2 id="json-msg"></h2>
-    <pre></pre>
-    <h2 id="joi"></h2>
-    <pre id="pre2"></pre>
+    <div changeable-navigation class="pre-container">
+      <pre></pre>
+    </div>
+    <div changeable-navigation class="container">
+      <div changeable-navigation class="container-item">
+        Hello world <span>icon</span>
+      </div>
+    </div>
     <script src="../dist/jm.umd.min.js"></script>
-    <script src="https://unpkg.com/joi@17.3.0/dist/joi-browser.min.js"></script>
     <script>
-      const {
-        defaultMessage,
-        num,
-        validate,
-        validateAsync,
-        str,
-        sameAs,
-        bool,
-        array,
-      } = jm
+      changeNavigation.onclick = function () {
+        document.querySelector(":root").classList.toggle("navigation-right");
+      };
       const userSchema = {
-        h: {},
-        username: str({ min: 6 }),
-        pass: str({ required: false, min: 7, max: 90 }),
-        email: str({ alphanum: true, label: 'CustomLabel' }),
-        r_pass: sameAs('pass'),
-        r2_pass: sameAs('r_pass'),
-        complete: bool(),
-        money: {
-          bitcoin: num(),
-          usd: num(),
-        },
-        tags: array({ items: num(), allow: ['hello'], min: 5, max: 10 }),
-      }
-
+        categories: jm.array({
+          items: [jm.num({ integer: true, label: "Item1" }), jm.str()],
+        }),
+        name: jm.str(),
+        email: jm.str({
+          mustAllUppercase: ({ value }) => {
+            console.log(value);
+            return /^[A-Z]+$/.test(value) || "%label% must all uppercase";
+          },
+        }),
+        users: jm.array({
+          items: {
+            name: jm.str(),
+            password: jm.str({ number: 7 }),
+            confirmPassword: jm.sameAs("password"),
+          },
+        }),
+        password: jm.str({ uppercase: 1, number: true }),
+        confirmPassword: jm.sameAs("password"),
+        currency: jm.obj({
+          btc: jm.str(),
+        }),
+      };
       const data = {
-        email: 'sjsz@hsd.com',
-        r2_pass: 'darkcris',
-        complete: true,
-        tags: 'hello',
-        money: {
-          bitcoin: 'jsjsjss',
-        },
-      }
+        name: "Cris Fandino",
+        email: "ASASDASDASDSADCOM",
+        password: "Daniela15",
+        confirmPassword: "Daniela15",
+        users: [
+          {
+            name: "John",
+            password: "12345",
+            confirmPassword: "125",
+          },
+        ],
+      };
 
-      let error = {}
-      const time = Date.now()
-      for (let i = 0; i < 1000; i++) {
-        error = validate(data, userSchema, { abortEarly: false })
-      }
-      const jmTime = (Date.now() - time) / 1000 + 'ms- jm (json-msg)'
+      jm.validate(data, userSchema);
 
-      document.querySelector('pre').innerHTML = JSON.stringify(error, null, 2)
+      let error = {};
+      let time = Date.now();
 
-      document.getElementById('json-msg').innerText = jmTime
+      error = jm.validate(data, userSchema, { abortEarly: false });
+
+      const jmTime = (Date.now() - time) / 1000 + "ms- jm (json-msg)";
+      document.querySelector("pre").innerHTML = JSON.stringify(error, null, 2);
+
+      document.getElementById("json-msg").innerText = jmTime;
     </script>
   </body>
 </html>

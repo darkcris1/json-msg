@@ -3,15 +3,16 @@
 json-msg is a lightweight alternative for Joi or Yup or any json validator.
 Unlike Joi, json-msg only focus on error messages and validations
 
-# [json-msg documentation](https://json-msg.vercel.app/)
+Checkout Documentation: **[json-msg documentation](https://json-msg.vercel.app/)**
 
-# Features
+## Features
 
 - Customizable Messages
 - Custom Validation
-- Easy Configuration
-- Lightweight 4.6kb
-- Fast
+- Very Simple
+- Exntendable Custom Validators
+- Lightweight 7kb
+- Fast (No serialization of data)
 - No Dependencies
 
 ## Installation
@@ -22,19 +23,19 @@ Npm
 npm i json-msg
 ```
 
-Unpkg
+Unpkg - 10kb
 
 ```html
 <script src="https://unpkg.com/json-msg"></script>
 ```
 
-UNPKG Unbabel version - 4.6kb (IE not supported)
+UNPKG Unbabel version - 7kb (IE not supported)
 
 ```html
 <script src="https://unpkg.com/json-msg/dist/jm.unbabel.min.js"></script>
 ```
 
-# Usage
+## Usage
 
 ```javascript
 import jm "json-msg";

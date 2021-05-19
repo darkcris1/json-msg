@@ -30,8 +30,13 @@ interface MainSchema {
    */
   label?: string;
   /**
-   *  This will allow the validator that value is allowed
+   *  This will allow the validator to allowed all the included values
    * @default undefined
+   *
+   * @example
+   * {
+   *    name: jm.str({ allow:[null, 0, 100] }) // This will allow the null,0 and 100
+   * }
    */
   allow?: any[];
 
@@ -198,7 +203,7 @@ interface Validators {
   file: ValidatorsFn<FileValidator>;
 }
 
-interface JM {
+interface JsonMsg {
   str(config?: StringSchema): Config<StringValidator>;
 
   num(config?: NumberSchema): Config<NumberValidator>;
@@ -262,6 +267,6 @@ interface JM {
   [key: string]: any;
 }
 
-declare const jm: JM;
+declare const jm: JsonMsg;
 
 export default jm;

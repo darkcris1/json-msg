@@ -1,114 +1,123 @@
-import { isInt, isFloat, isEmail, isUndefined, TYPE_KEY, isArray } from './is'
-import { initialMsg } from './messages'
-import { validate } from './validate'
+import { TYPE_KEY } from "./is";
+import { initialMsg } from "./messages";
 
-function removeUnuseOption(config, message) {
-  const { label, allow, required, type = 'any' } = config
-  const typeObj = { message }
-  typeObj[TYPE_KEY] = true
+const higherKey = ["required", "type"];
 
-  if (label) typeObj.label = label
-  if (allow) typeObj.allow = allow
+function initConfig(config) {
+  const { required = true } = config;
+  const leftOver = {};
 
-  delete config.label
-  delete config.allow
-  delete config.message
-
-  typeObj.config = { required, type, ...config }
-  delete config.type
-
-  return typeObj
+  for (const key in config) {
+    const keyValue = config[key];
+    if (!higherKey.includes(keyValue) && keyValue !== false)
+      leftOver[key] = keyValue;
+  }
+  return {
+    required,
+    type: config.type,
+    ...leftOver,
+  };
 }
 
 function Type(option = {}) {
-  const msg = option.message || {}
-  msg.required = msg.required || '%label% is required'
-  option.required = isUndefined(option.required) ? true : option.required
-
-  const { message, config, ...rest } = removeUnuseOption(option, msg) // Initialize the config into ideal option for validator
+  const { messages, label, allow, ...rest } = option;
+  messages.required = messages.required || "%label% is required";
+  const config = initConfig(rest); // Initialize the config into ideal option for validator
 
   return {
     config,
-    message,
-    ...rest,
-  }
+    messages,
+    [TYPE_KEY]: true,
+    label,
+    allow,
+  };
 }
 
 // Number type for validating errors
 export function num(config = {}) {
-  const type = 'number'
-  if (config.integer) config.integer = isInt
-  if (config.float) config.float = isFloat
+  const type = "number";
+
   return Type({
     type,
     ...config,
-    message: { ...initialMsg[type], ...config.message },
-  })
+    messages: { ...initialMsg[type], ...config.messages },
+  });
 }
 
 // String type for validating errors
 export function str(config = {}) {
-  const type = 'string'
-  if (config.alphanum) config.alphanum = /^[A-Za-z0-9]+$/
-  if (config.email) config.email = isEmail
+  const type = "string";
+
   return Type({
     type,
     ...config,
-    message: { ...initialMsg[type], ...config.message },
-  })
+    messages: { ...initialMsg[type], ...config.messages },
+  });
 }
 
 // arrat type for validating errors
 export function array(config = {}) {
-  const type = 'array'
-  const items = config.items
-  const isItemsMatch = (arr) => {
-    if (!arr) return
-    const isItemArray = isArray(items)
-    const theItem = isItemArray ? items : arr
-    for (let i = 0; i < theItem.length; i++)
-      if (validate(arr[i], isItemArray ? items[i] : items)) return false
-    // if the {isItemArray}  item is array then loop dynamically through the items
-    return true
-  }
-
-  if (items) config.items = isItemsMatch
+  const type = "array";
 
   return Type({
     type,
     ...config,
-    message: {
+    messages: {
       ...initialMsg[type],
-      ...config.message,
+      ...config.messages,
     },
-  })
+  });
 }
 
 // Boolean type for checking errors
 export function bool(config = {}) {
-  const type = 'boolean'
+  const type = "boolean";
   return Type({
     type,
     ...config,
-    message: {
+    messages: {
       ...initialMsg[type],
-      ...config.message,
+      ...config.messages,
     },
-  })
+  });
 }
-
+export function file(config = {}) {
+  const type = "file";
+  return Type({
+    type,
+    ...config,
+    messages: {
+      ...initialMsg[type],
+      ...config.messages,
+    },
+  });
+}
+export function obj(shape, config = {}) {
+  const type = "object";
+  return Type({
+    type,
+    required: false,
+    ...config,
+    shape,
+    messages: {
+      ...initialMsg[type],
+      ...config.messages,
+    },
+  });
+}
 // reference for value
 export function sameAs(key, config = {}) {
   return Type({
-    sameAs: key || '',
+    sameAs: key || "",
     label: config.label,
-    message: {
+    type: "sameas",
+    messages: {
       sameAs: initialMsg.sameAs,
-      ...config.message,
+      ...config.messages,
     },
-  })
+  });
 }
 
 export function any(config = {}) {
-  return Type(config)
+  return Type({ ...config, type: "any" });
 }

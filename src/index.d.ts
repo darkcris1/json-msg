@@ -1,89 +1,109 @@
+import { TYPE_KEY } from "./is";
+
 /**
  *  Messages for errors
  */
 interface MessageObject {
-  type?: string
-  required?: string
-  max?: string
-  min?: string
-  alphanum?: string
-  items?: string
-  sameAs?: string
-  integer?: string
-  email?: string
-  [key: string]: string
-}
-
-interface Config {
-  message: MessageObject
-  allow?: any[]
-  isJsonMsg: true
-  config: object
+  type?: string;
+  required?: string;
+  max?: string;
+  min?: string;
+  alphanum?: string;
+  items?: string;
+  sameAs?: string;
+  integer?: string;
+  email?: string;
+  maxSize?: string;
+  minSize?: string;
+  uppercase?: string;
+  number?: string;
+  [key: string]: string;
 }
 
 interface MainSchema {
-  /**
-   * ReadOnly Property
-   */
-  readonly type?: String
-  message?: MessageObject
-  /**
-   * check the min length or min value of a data
-   * @default undefined
-   */
-  min?: number
-  /**
-   * check the max length or max value of a data
-   * @default undefined
-   */
-  max?: number
+  message?: MessageObject;
+
   /**
    * Set a default label for messages
    *
    * default value is the keys of your object
    */
-  label?: string
+  label?: string;
   /**
    *  This will allow the validator that value is allowed
    * @default undefined
    */
-  allow?: any[]
-  /**
-   * When its false validator will ignore whether its undefined or empty string
-   * @default true
-   */
-  required?: boolean
+  allow?: any[];
 
   /**
    * Add A custom validation
    */
-  [key: string]: any
+  [key: string]: any;
+}
+interface Config<T> extends MainSchema {
+  "$$jmType->": true;
+  config: T;
 }
 
-export interface StringSchema extends MainSchema {
-  email?: boolean
-  alphanum?: boolean
+type JMTypes =
+  | "object"
+  | "array"
+  | "any"
+  | "number"
+  | "file"
+  | "string"
+  | "boolean";
+export interface MainValidator {
+  /**
+   * Type is a ReadOnly Property
+   */
+  readonly type?: JMTypes;
+  /**
+   * When its false validator will ignore whether its undefined or empty string
+   * @default true
+   */
+  required?: boolean;
 }
 
-export interface NumberSchema extends MainSchema {
+export interface MinMaxValidator {
+  /**
+   * check the min length or min value of a data
+   * @default undefined
+   */
+  min?: number;
+  /**
+   * check the max length or max value of a data
+   * @default undefined
+   */
+  max?: number;
+}
+export interface StringValidator extends MainValidator, MinMaxValidator {
+  email?: boolean;
+  alphanum?: boolean;
+
+  uppercase?: number;
+  number?: number;
+}
+
+export interface NumberValidator extends MainValidator, MinMaxValidator {
   /**
    * Check if the number how many digits in the number
    * @default undefined
    */
-  digit?: number
+  digit?: number;
   /**
    * Check if the number is integer
    * @default false
    */
-  float?: boolean
+  float?: boolean;
   /**
    * Check if the number is integer
    * @default false
    */
-  integer?: boolean
+  integer?: boolean;
 }
 
-export interface ArraySchema extends MainSchema {
+export interface ArrayValidator extends MainValidator, MinMaxValidator {
   /**
    * You can add either array or type object directly
    * array({items: num()}) // this will check if the items of the array is a number
@@ -92,65 +112,108 @@ export interface ArraySchema extends MainSchema {
    *
    * array({items: [num(), str()] , min: 2})
    */
-  items?: Config | Config[]
+  items?: JMTypeObject | JMTypeObject[];
 }
 
-export interface BooleanSchema {
-  required?: boolean
-  message?: MessageObject
-  label?: string
+export interface BooleanValidator extends MainValidator {}
+export interface SameasValidator extends MainValidator {}
+export interface AnyValidator extends MainValidator {}
+export interface ObjectValidator extends MainValidator {}
+export interface FileValidator extends MainValidator {
+  maxSize?: number;
+  minSize?: number;
 }
 
-export interface SameAsSChema {
-  message?: MessageObject
-  label?: string
+export interface StringSchema extends StringValidator, MainSchema {
+  /**
+   * This will trim the string value first before it validate
+   *
+   * NOTE: It will not serialize your data
+   */
+  trim?: boolean;
 }
-export interface anySchema {
-  label?: string
-  required?: boolean
-  message?: MessageObject
-}
-export type JMTypeObject =
-  | StringSchema
-  | NumberSchema
-  | StringSchema
-  | BooleanSchema
-  | ArraySchema
-  | anySchema
-  | object
+export interface AnySchema extends AnyValidator, MainSchema {}
+export interface ArraySchema extends ArrayValidator, MainSchema {}
+export interface ObjectSchema extends ObjectValidator, MainSchema {}
+export interface FileSchema extends FileValidator, MainSchema {}
+export interface SameasSchema extends SameasValidator, MainSchema {}
+export interface BooleanSchema extends BooleanValidator, MainSchema {}
+export interface NumberSchema extends NumberValidator, MainSchema {}
+
+export type JMTypeObject = MainSchema | object;
 
 interface ValidationOption {
   /**
    * When its true this will return an array of all the errors of that key value
    * @default false
    */
-  showAllErrors?: boolean
+  showAllErrors?: boolean;
   /**
    * if its false, this will return all the errors
    * if its true, validator will immediately return if there is an error
    * @default true
    */
-  abortEarly?: boolean
+  abortEarly?: boolean;
+  /**
+   * If its false , it will not check the non properties part of schema
+   * @default true
+   */
+  strict?: boolean;
 }
 
 export interface DefaultMessageObject {
-  string?: MessageObject
-  boolean?: MessageObject
-  number?: MessageObject
-  sameAs?: string
-  array?: MessageObject
+  string?: MessageObject;
+  boolean?: MessageObject;
+  number?: MessageObject;
+  sameAs?: string;
+  array?: MessageObject;
+  object: MessageObject;
+  file: MessageObject;
 }
 
-declare namespace jm {
-  function str(config?: StringSchema): Config
+interface ValidationParams<T> {
+  value: any;
+  data?: any;
+  typeObj: Config<T>;
+  key: string;
+  keyValue: string;
+}
 
-  function num(config?: NumberSchema): Config
+interface useFnParams<T> {
+  value: any;
+  typeObj: Config<T>;
+}
+interface ValidatorsFn<T> {
+  extend(params: { [key: string]: (param: ValidationParams<T>) => void }): void;
+  use(...params: ((param: useFnParams<T>) => any)[]): any;
+}
 
-  function array(config?: ArraySchema): Config
+interface Validators {
+  string: ValidatorsFn<StringValidator>;
+  number: ValidatorsFn<NumberValidator>;
+  array: ValidatorsFn<ArrayValidator>;
+  object: ValidatorsFn<ObjectValidator>;
+  any: ValidatorsFn<AnyValidator>;
+  sameas: ValidatorsFn<SameasValidator>;
+  file: ValidatorsFn<FileValidator>;
+}
 
-  function bool(config?: BooleanSchema): Config
+interface JM {
+  str(config?: StringSchema): Config<StringValidator>;
 
-  function any(config?: anySchema): Config
+  num(config?: NumberSchema): Config<NumberValidator>;
+
+  array(config?: ArraySchema): Config<ArrayValidator>;
+
+  bool(config?: BooleanSchema): Config<BooleanValidator>;
+
+  any(config?: AnySchema): Config<AnyValidator>;
+
+  file(config?: FileSchema): Config<FileValidator>;
+  obj(
+    shape: { [key: string]: Config<MainValidator> },
+    config?: ObjectSchema
+  ): Config<ObjectValidator>;
   /**
    * path for the same input
    * eg.
@@ -160,7 +223,7 @@ declare namespace jm {
    * }
    * NOTE: This is only work for relative path
    */
-  function sameAs(path: string, config?: SameAsSChema): Config
+  sameAs(path: string, config?: SameasSchema): Config<SameasValidator>;
   /**
    * %label% is the label of the data -
    * %keyValue% is the value of the key -
@@ -170,7 +233,7 @@ declare namespace jm {
    * this will return "Username must have atleast 4 length"
    *
    */
-  function defaultMessage(defaultMessage: DefaultMessageObject)
+  defaultMessage(defaultMessage: DefaultMessageObject): void;
   /**
    * This will return an object of error messages
    *
@@ -180,20 +243,25 @@ declare namespace jm {
   /**
    * This will return a Promise of error messages or null if there is no errors
    */
-  function validateAsync<data>(
+  validateAsync<data>(
     data: data,
     schema: JMTypeObject,
-    option?: ValidationOption,
-  ): Promise<null | data>
+    option?: ValidationOption
+  ): Promise<null | string | data>;
 
   /**
    * Return an object if error occured and return null if there is no errors
    */
-  function validate<data>(
+  validate<data>(
     data: data,
     schema: JMTypeObject,
-    option?: ValidationOption,
-  ): null | data
+    option?: ValidationOption
+  ): null | string | data;
+
+  validators: Validators;
+  [key: string]: any;
 }
 
-export default jm
+declare const jm: JM;
+
+export default jm;

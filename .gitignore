@@ -1,7 +1,7 @@
 # Dependency directories
 node_modules/
 jspm_packages/
-
+test/index.ts
 # Optional npm cache directory
 .npm
 

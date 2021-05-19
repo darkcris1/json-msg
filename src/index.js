@@ -1,11 +1,13 @@
-import * as types from './types'
-import { defaultMessage } from './messages'
-import { validate, validateAsync } from './validate'
+import * as types from "./types";
+import { defaultMessage } from "./messages";
+import { validate, validateAsync } from "./validator/validate";
+import * as validators from "./validator/index";
 
 const jm = {
   ...types,
   defaultMessage,
   validate,
   validateAsync,
-}
-export default jm
+  validators,
+};
+export default jm;

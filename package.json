@@ -1,7 +1,7 @@
 {
   "name": "json-msg",
   "version": "2.0.0",
-  "description": "Fast, quite and beautiful messages for validating schema",
+  "description": "Fast, quite and beautiful messages for validating json schema",
   "main": "dist/jm.cjs.js",
   "browser": "dist/jm.umd.min.js",
   "module": "src/index.js",
@@ -29,7 +29,8 @@
     "messages",
     "schema",
     "json validator",
-    "joi"
+    "joi",
+    "extendable"
   ],
   "bugs": {
     "url": "https://github.com/darkcris1/json-msg/issues"

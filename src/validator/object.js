@@ -9,7 +9,9 @@ function objectValidator(validatorConfig) {
     const { allow, label, config, validationConfig, data } = typeObj;
     const { showAllErrors } = validationConfig;
     const errors = [];
+
     if (allow && allow.includes(value)) return null;
+
     plugins.forEach((plugin) => {
       value = plugin({ value, typeObj });
     });

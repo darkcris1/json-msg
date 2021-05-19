@@ -79,24 +79,22 @@
             confirmPassword: jm.sameAs("password"),
           },
         }),
-        password: jm.str({ uppercase: 1, number: true }),
+        password: jm.str({ uppercase: 1, number: 2 }),
         confirmPassword: jm.sameAs("password"),
-        currency: jm.obj({
-          btc: jm.str(),
-        }),
+        currency: jm.obj(
+          {
+            btc: jm.str(),
+          },
+          { allow: ["None"], required: true }
+        ),
       };
       const data = {
         name: "Cris Fandino",
         email: "ASASDASDASDSADCOM",
         password: "Daniela15",
         confirmPassword: "Daniela15",
-        users: [
-          {
-            name: "John",
-            password: "12345",
-            confirmPassword: "125",
-          },
-        ],
+
+        currency: "None",
       };
 
       jm.validate(data, userSchema);
@@ -104,7 +102,9 @@
       let error = {};
       let time = Date.now();
 
-      error = jm.validate(data, userSchema, { abortEarly: false });
+      error = jm.validate(data, userSchema, {
+        abortEarly: false,
+      });
 
       const jmTime = (Date.now() - time) / 1000 + "ms- jm (json-msg)";
       document.querySelector("pre").innerHTML = JSON.stringify(error, null, 2);

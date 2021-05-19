@@ -13,7 +13,7 @@ export const initialMsg = {
     max: "%label% characters length must be less than %keyValue%",
     email: "%label% must be a valid email",
     alphanum: "%label% must contain letters and numbers only",
-    number: "%label% must have atleast %keyvalue% number",
+    number: "%label% must have atleast %keyValue% digit",
     uppercase: "%label% must have atleast %keyValue% uppercase",
   },
   array: {

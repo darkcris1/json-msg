@@ -201,6 +201,7 @@ interface Validators {
   any: ValidatorsFn<AnyValidator>;
   sameas: ValidatorsFn<SameasValidator>;
   file: ValidatorsFn<FileValidator>;
+  boolean: ValidatorsFn<BooleanValidator>;
 }
 
 interface JsonMsg {

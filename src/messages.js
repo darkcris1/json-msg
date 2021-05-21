@@ -9,11 +9,11 @@ export const initialMsg = {
   },
   string: {
     type: "%label% must be a string",
-    min: "%label% characters length must be greater than %keyValue%",
-    max: "%label% characters length must be less than %keyValue%",
+    min: "%label% must atleast %keyValue% characters",
+    max: "%label% must be less than %keyValue% characters",
     email: "%label% must be a valid email",
     alphanum: "%label% must contain letters and numbers only",
-    number: "%label% must have atleast %keyValue% digit",
+    number: "%label% must have atleast %keyValue% numbers",
     uppercase: "%label% must have atleast %keyValue% uppercase",
   },
   array: {

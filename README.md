@@ -14,6 +14,8 @@ Checkout Documentation: **[json-msg documentation](https://json-msg.vercel.app/)
 - Lightweight 7kb
 - Fast (No serialization of data)
 - No Dependencies
+- Unit Tested
+- Bunch of built-in validator
 
 ## Installation
 

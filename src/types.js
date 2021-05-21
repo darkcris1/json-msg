@@ -20,7 +20,7 @@ function initConfig(config) {
 }
 
 function Type(option = {}) {
-  const { messages, label, allow, ...rest } = option;
+  const { messages = {}, label, allow, ...rest } = option;
   messages.required = messages.required || "%label% is required";
   const config = initConfig(rest); // Initialize the config into ideal option for validator
 
@@ -95,9 +95,9 @@ export function file(config = {}) {
 export function obj(shape, config = {}) {
   const type = "object";
   return Type({
-    type,
     required: false,
     ...config,
+    type,
     shape,
     messages: {
       ...initialMsg[type],
@@ -119,5 +119,5 @@ export function sameAs(key, config = {}) {
 }
 
 export function any(config = {}) {
-  return Type({ ...config, type: "any" });
+  return Type({ ...config, required: false, type: "any" });
 }

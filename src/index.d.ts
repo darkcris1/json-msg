@@ -21,7 +21,7 @@ interface MessageObject {
 }
 
 interface MainSchema {
-  message?: MessageObject;
+  messages?: MessageObject;
 
   /**
    * Set a default label for messages

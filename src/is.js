@@ -3,7 +3,8 @@ export const JM_ARRAY_MSG_KEY = "__jmArrayMsg"; //Unique Type Obj Key
 
 export const isJmArrayMsg = (obj) => !!obj[JM_ARRAY_MSG_KEY];
 export const isJMType = (obj) => !!obj[TYPE_KEY];
-export const isFunction = (func) => func instanceof Function;
+export const isFunction = (func) =>
+  func instanceof Function && !/^class/.test(func.toString());
 export const isString = (str) => typeof str === "string";
 export const isArray = (arr) => Array.isArray(arr);
 export const isRegExp = (regex) => regex instanceof RegExp;
